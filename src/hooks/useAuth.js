@@ -116,6 +116,7 @@ export function useAuth() {
         redirectTo: resolveRedirectUrl(),
         queryParams: {
           prompt: 'select_account',
+          hd: 'tcetmumbai.in',
         },
       },
     })
