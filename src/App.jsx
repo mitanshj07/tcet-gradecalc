@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
-import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import AppShell from './components/AppShell'
 import { useSupabaseSync } from './hooks/useSupabaseSync'
 import { useStore } from './store/useStore'
@@ -23,7 +23,7 @@ export default function App() {
   }, [theme])
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -41,7 +41,7 @@ export default function App() {
           <Route path="*" element={<Navigate replace to="/not-found" />} />
         </Routes>
       </Suspense>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
 
