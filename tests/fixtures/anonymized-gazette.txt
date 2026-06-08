@@ -1,0 +1,31 @@
+THAKUR COLLEGE OF ENGINEERING AND TECHNOLOGY
+OFFICE REGISTER
+BRANCH: Artificial Intelligence and Data Science
+SEMESTER I
+SCHEME: HME 2023
+EXAM: JANUARY 2026
+REPORT DATE: 14/02/2026
+
+COURSE I: Physics
+COURSE II: Mathematics-I
+COURSE III: Basic Electrical Engineering
+COURSE IV: Engineering Graphics & Design
+COURSE V: Workshop & Manufacturing Practices-I
+COURSE VI: English for General & Professional Communication
+COURSE VII: Attitude & Aptitude Development-I / NCC
+
+SEAT NO: TCET2025001
+NAME: SAMPLE STUDENT
+
+BSC1101 Physics 46 34 80 4 O 10 40
+BSC1102 Mathematics-I 41 31 23 72 5 B 8 42
+ESC1101 Basic Electrical Engineering 39 29 20 68 4 C 7 31
+ESC1102 Engineering Graphics & Design 42 33 22 21 75 4 A 9 38
+ESC1103 Workshop & Manufacturing Practices-I 22 1 O 10 10
+HSMC1101 English for General & Professional Communication 40 30 22 70 3 B 8 26
+MC1101 Attitude & Aptitude Development-I / NCC P
+
+TOTAL C: 21
+TOTAL CG: 187
+SGPA: 8.90
+RESULT: P
