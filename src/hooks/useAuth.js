@@ -115,7 +115,6 @@ export function useAuth() {
       options: {
         redirectTo: resolveRedirectUrl(),
         queryParams: {
-          hd: TCET_ALLOWED_EMAIL_DOMAINS[0] ?? 'tcetmumbai.in',
           prompt: 'select_account',
         },
       },
