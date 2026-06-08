@@ -1,0 +1,16 @@
+{
+  "name": "TCET GradeCalc",
+  "short_name": "GradeCalc",
+  "description": "TCET CBCGS-HME 2023 SGPA and CGPA calculator.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0a0f1a",
+  "theme_color": "#0a0f1a",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
