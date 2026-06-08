@@ -68,10 +68,11 @@ export function extractHeaderMetadata(text) {
 
 export function extractCourseMap(text) {
   const map = {}
+  const regex = /COURSE\s*(VIII|VII|VI|IV|III|II|V|I)\s*[:-]?\s*(.+?)(?=\s*COURSE\s*(?:VIII|VII|VI|IV|III|II|V|I)\b|\s*$)/gi
   for (const line of linesOf(text)) {
-    const match = line.match(/COURSE\s*(VIII|VII|VI|IV|III|II|V|I)\s*[:-]?\s*(.+)/i)
-    if (match) {
-      map[match[1].toUpperCase()] = match[2].trim()
+    const matches = [...line.matchAll(regex)]
+    for (const match of matches) {
+      map[match[1].toUpperCase()] = match[2].replace(/^[:-]\s*/, '').trim()
     }
   }
   return map
@@ -175,12 +176,21 @@ function extractHorizontalStudentRecord(text) {
   for (let index = startIndex + 1; index < lines.length; index += 1) {
     const line = lines[index]
     if (/^\/\s*- FEMALE|^G\s*: GRADE|^MARKS\s*:|^GRADE POINT|^PREPARED BY|^PAGE \d+/i.test(line)) break
-    if (/^\d{1,2}\s+[A-Z]\s+\d{1,2}/.test(line)) {
-      practicalLine = line
-      break
-    }
-    if (/^[A-Z][A-Z ]+$/.test(line)) {
-      nameLines.push(line)
+    if (/^\d{8,9}\b/.test(line)) break
+    
+    const marksIdx = !practicalLine ? line.search(/\b\d{1,2}\s+[A-Z]\s+\d{1,2}\b/) : -1
+    if (marksIdx !== -1) {
+      if (marksIdx > 0) {
+        const namePrefix = line.slice(0, marksIdx).trim()
+        if (namePrefix) {
+          nameLines.push(namePrefix)
+        }
+      }
+      practicalLine = line.slice(marksIdx).trim()
+    } else {
+      if (/^[A-Z/][A-Z/ '.-]+$/i.test(line)) {
+        nameLines.push(line)
+      }
     }
   }
 
@@ -311,9 +321,16 @@ function parseHorizontalStudentRows(record, selectedTemplate) {
       rawSubjectLine: '',
       isNonCredit: subject.isNonCredit,
     }
+    const mergedCredits = (existing.credits ?? 0) + (practical.credits ?? 0)
+    const mergedCreditPoints = (existing.creditPoints ?? 0) + (practical.creditPoints ?? 0)
+    const mergedGradePoint = mergedCredits ? Number((mergedCreditPoints / mergedCredits).toFixed(2)) : 0
+    
     parsedByCode.set(subject.code, {
       ...existing,
       ...practical,
+      credits: mergedCredits,
+      creditPoints: mergedCreditPoints,
+      gradePoint: mergedGradePoint,
       confidence: Math.min(0.95, Math.max(existing.confidence ?? 0.85, practical.confidence ?? 0.85)),
       rawSubjectLine: `${existing.rawSubjectLine} | ${practicalTokens.slice(practicalCursor - width, practicalCursor).join(' ')}`.trim(),
     })

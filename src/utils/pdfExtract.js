@@ -1,20 +1,31 @@
-function groupTextItemsIntoLines(items = []) {
-  const rows = new Map()
+function groupTextItemsIntoLines(items = [], tolerance = 8) {
+  const sortedItems = items
+    .filter((item) => item?.str?.trim())
+    .map((item) => ({
+      text: item.str,
+      x: item.transform?.[4] ?? 0,
+      y: item.transform?.[5] ?? 0,
+    }))
+    .sort((a, b) => b.y - a.y)
 
-  for (const item of items) {
-    if (!item?.str?.trim()) continue
-    const x = item.transform?.[4] ?? 0
-    const y = item.transform?.[5] ?? 0
-    const rowKey = String(Math.round(y))
-    const row = rows.get(rowKey) ?? []
-    row.push({ text: item.str, x, y })
-    rows.set(rowKey, row)
+  const rows = []
+
+  for (const item of sortedItems) {
+    const foundRow = rows.find((row) => Math.abs(row.y - item.y) <= tolerance)
+    if (foundRow) {
+      foundRow.items.push(item)
+    } else {
+      rows.push({
+        y: item.y,
+        items: [item],
+      })
+    }
   }
 
-  return [...rows.values()]
-    .sort((a, b) => (b[0]?.y ?? 0) - (a[0]?.y ?? 0))
+  return rows
+    .sort((a, b) => b.y - a.y)
     .map((row) =>
-      row
+      row.items
         .sort((a, b) => a.x - b.x)
         .map((item) => item.text.trim())
         .filter(Boolean)

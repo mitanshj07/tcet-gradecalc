@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { hasSupabaseConfig, supabase } from '../utils/supabase'
-import { TCET_ALLOWED_EMAIL_DOMAINS, getAuthProfileFields } from '../utils/authDomains'
+import { getAuthProfileFields } from '../utils/authDomains'
 import { getRedirectUrl, parseAuthCallbackUrl } from '../utils/authRedirect'
 
 // Auth flow is handled natively by @supabase/supabase-js v2
