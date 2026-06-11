@@ -52,9 +52,6 @@ export default function GazettePDFUpload({ branch, semester }) {
 
     try {
       setPhase('validating')
-      if (file.type !== 'application/pdf') {
-        throw new Error('Please choose a PDF file.')
-      }
       setPhase('reading')
       const extraction = await extractPdfText(file)
       setRawText(extraction.text)
@@ -78,7 +75,9 @@ export default function GazettePDFUpload({ branch, semester }) {
       setOverrideTemplateKey(nextParsed.metadata?.templateKey ?? '')
       setPhase('review')
     } catch (nextError) {
-      setError(nextError.message ?? 'Could not parse this PDF.')
+      const msg = nextError.message ?? 'Could not parse this PDF.'
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+      setError(isMobile ? `${msg} Tip: If this keeps failing on your phone, try using a desktop browser.` : msg)
       setPhase('failed')
     }
   }
@@ -203,7 +202,7 @@ export default function GazettePDFUpload({ branch, semester }) {
         <label className="primary-button cursor-pointer">
           <Upload className="size-4" />
           Upload PDF
-          <input accept="application/pdf" className="hidden" type="file" onChange={handleFileChange} />
+          <input accept=".pdf,application/pdf" className="hidden" type="file" onChange={handleFileChange} />
         </label>
       </div>
 

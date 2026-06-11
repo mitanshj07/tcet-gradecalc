@@ -1,3 +1,8 @@
+import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url'
+
+const PDFJS_VERSION = '6.0.227'
+const CDN_WORKER_URL = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.mjs`
+
 function groupTextItemsIntoLines(items = [], tolerance = 8) {
   const sortedItems = items
     .filter((item) => item?.str?.trim())
@@ -34,8 +39,81 @@ function groupTextItemsIntoLines(items = [], tolerance = 8) {
     .filter(Boolean)
 }
 
+async function loadPdfModule() {
+  return await import('pdfjs-dist/legacy/build/pdf.mjs')
+}
+
+function configureWorker(pdfjsModule) {
+  const { GlobalWorkerOptions } = pdfjsModule
+
+  // Strategy 1: Use Vite-resolved static worker URL (best for production builds)
+  try {
+    if (pdfjsWorkerUrl) {
+      GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl
+      return 'local'
+    }
+  } catch {
+    // fall through
+  }
+
+  // Strategy 2: CDN-hosted worker (reliable fallback for mobile)
+  GlobalWorkerOptions.workerSrc = CDN_WORKER_URL
+  return 'cdn'
+}
+
+async function loadPdfDocument(data) {
+  const pdfjsModule = await loadPdfModule()
+
+  // Try with worker first
+  const workerStrategy = configureWorker(pdfjsModule)
+  try {
+    const loadingTask = pdfjsModule.getDocument({ data })
+    const pdf = await loadingTask.promise
+    return { pdf, strategy: workerStrategy }
+  } catch (workerError) {
+    // If local worker failed, try CDN
+    if (workerStrategy === 'local') {
+      try {
+        pdfjsModule.GlobalWorkerOptions.workerSrc = CDN_WORKER_URL
+        const loadingTask = pdfjsModule.getDocument({ data })
+        const pdf = await loadingTask.promise
+        return { pdf, strategy: 'cdn-fallback' }
+      } catch {
+        // fall through to no-worker
+      }
+    }
+
+    // Strategy 3: Disable worker entirely (runs on main thread — slower but universally compatible)
+    try {
+      pdfjsModule.GlobalWorkerOptions.workerSrc = ''
+      const loadingTask = pdfjsModule.getDocument({
+        data,
+        disableWorker: true,
+      })
+      const pdf = await loadingTask.promise
+      return { pdf, strategy: 'no-worker' }
+    } catch (noWorkerError) {
+      throw new Error(
+        `Could not initialize the PDF reader. ` +
+        `Worker error: ${workerError?.message || 'unknown'}. ` +
+        `Fallback error: ${noWorkerError?.message || 'unknown'}. ` +
+        `Please try on a desktop browser or update your mobile browser.`
+      )
+    }
+  }
+}
+
+function isPdfFile(file) {
+  if (!file) return false
+  // Check MIME type (may be empty on some mobile browsers)
+  if (file.type === 'application/pdf') return true
+  // Fallback: check file extension
+  if (file.name && /\.pdf$/i.test(file.name)) return true
+  return false
+}
+
 export async function extractPdfText(file, { maxPages = 5 } = {}) {
-  if (!file || file.type !== 'application/pdf') {
+  if (!isPdfFile(file)) {
     throw new Error('Please choose a PDF file.')
   }
 
@@ -43,12 +121,16 @@ export async function extractPdfText(file, { maxPages = 5 } = {}) {
     throw new Error('PDF must be 5MB or smaller.')
   }
 
-  const { GlobalWorkerOptions, getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs')
-  GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/legacy/build/pdf.worker.mjs', import.meta.url).toString()
+  let buffer
+  try {
+    buffer = await file.arrayBuffer()
+  } catch (bufferError) {
+    throw new Error(
+      `Could not read the PDF file. ${bufferError?.message || 'Your browser may not support this file picker.'}`,
+    )
+  }
 
-  const buffer = await file.arrayBuffer()
-  const loadingTask = getDocument({ data: buffer })
-  const pdf = await loadingTask.promise
+  const { pdf } = await loadPdfDocument(new Uint8Array(buffer))
 
   if (pdf.numPages > maxPages) {
     throw new Error(`PDF has ${pdf.numPages} pages. Current limit is ${maxPages} pages.`)
