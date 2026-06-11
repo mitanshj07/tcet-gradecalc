@@ -1,7 +1,7 @@
-import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url'
+import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.js?url'
 
-const PDFJS_VERSION = '6.0.227'
-const CDN_WORKER_URL = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.mjs`
+const PDFJS_VERSION = '3.11.174'
+const CDN_WORKER_URL = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.js`
 
 function groupTextItemsIntoLines(items = [], tolerance = 8) {
   const sortedItems = items
@@ -40,7 +40,7 @@ function groupTextItemsIntoLines(items = [], tolerance = 8) {
 }
 
 async function loadPdfModule() {
-  return await import('pdfjs-dist/legacy/build/pdf.mjs')
+  return await import('pdfjs-dist/legacy/build/pdf.js')
 }
 
 function configureWorker(pdfjsModule) {
