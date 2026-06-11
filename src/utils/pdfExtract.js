@@ -1,7 +1,6 @@
-import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.js?url'
-
 const PDFJS_VERSION = '3.11.174'
-const CDN_WORKER_URL = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.js`
+const CDN_URL = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.min.js`
+const WORKER_URL = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.js`
 
 function groupTextItemsIntoLines(items = [], tolerance = 8) {
   const sortedItems = items
@@ -39,75 +38,36 @@ function groupTextItemsIntoLines(items = [], tolerance = 8) {
     .filter(Boolean)
 }
 
-async function loadPdfModule() {
-  return await import('pdfjs-dist/legacy/build/pdf.js')
-}
-
-function configureWorker(pdfjsModule) {
-  const { GlobalWorkerOptions } = pdfjsModule
-
-  // Strategy 1: Use Vite-resolved static worker URL (best for production builds)
-  try {
-    if (pdfjsWorkerUrl) {
-      GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl
-      return 'local'
+function loadPdfJsScript() {
+  return new Promise((resolve, reject) => {
+    if (window.pdfjsLib) {
+      return resolve(window.pdfjsLib)
     }
-  } catch {
-    // fall through
-  }
 
-  // Strategy 2: CDN-hosted worker (reliable fallback for mobile)
-  GlobalWorkerOptions.workerSrc = CDN_WORKER_URL
-  return 'cdn'
-}
+    const script = document.createElement('script')
+    script.src = CDN_URL
+    script.async = true
 
-async function loadPdfDocument(data) {
-  const pdfjsModule = await loadPdfModule()
-
-  // Try with worker first
-  const workerStrategy = configureWorker(pdfjsModule)
-  try {
-    const loadingTask = pdfjsModule.getDocument({ data })
-    const pdf = await loadingTask.promise
-    return { pdf, strategy: workerStrategy }
-  } catch (workerError) {
-    // If local worker failed, try CDN
-    if (workerStrategy === 'local') {
-      try {
-        pdfjsModule.GlobalWorkerOptions.workerSrc = CDN_WORKER_URL
-        const loadingTask = pdfjsModule.getDocument({ data })
-        const pdf = await loadingTask.promise
-        return { pdf, strategy: 'cdn-fallback' }
-      } catch {
-        // fall through to no-worker
+    script.onload = () => {
+      if (window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = WORKER_URL
+        resolve(window.pdfjsLib)
+      } else {
+        reject(new Error('PDF.js loaded but pdfjsLib is undefined.'))
       }
     }
 
-    // Strategy 3: Disable worker entirely (runs on main thread — slower but universally compatible)
-    try {
-      pdfjsModule.GlobalWorkerOptions.workerSrc = ''
-      const loadingTask = pdfjsModule.getDocument({
-        data,
-        disableWorker: true,
-      })
-      const pdf = await loadingTask.promise
-      return { pdf, strategy: 'no-worker' }
-    } catch (noWorkerError) {
-      throw new Error(
-        `Could not initialize the PDF reader. ` +
-        `Worker error: ${workerError?.message || 'unknown'}. ` +
-        `Fallback error: ${noWorkerError?.message || 'unknown'}. ` +
-        `Please try on a desktop browser or update your mobile browser.`
-      )
+    script.onerror = () => {
+      reject(new Error('Failed to load PDF.js from CDN. Please check your internet connection.'))
     }
-  }
+
+    document.head.appendChild(script)
+  })
 }
 
 function isPdfFile(file) {
   if (!file) return false
-  // Check MIME type (may be empty on some mobile browsers)
   if (file.type === 'application/pdf') return true
-  // Fallback: check file extension
   if (file.name && /\.pdf$/i.test(file.name)) return true
   return false
 }
@@ -130,7 +90,15 @@ export async function extractPdfText(file, { maxPages = 5 } = {}) {
     )
   }
 
-  const { pdf } = await loadPdfDocument(new Uint8Array(buffer))
+  const pdfjsLib = await loadPdfJsScript()
+
+  let pdf
+  try {
+    const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(buffer) })
+    pdf = await loadingTask.promise
+  } catch (error) {
+    throw new Error(`PDF reader failed to parse document: ${error.message}`)
+  }
 
   if (pdf.numPages > maxPages) {
     throw new Error(`PDF has ${pdf.numPages} pages. Current limit is ${maxPages} pages.`)
