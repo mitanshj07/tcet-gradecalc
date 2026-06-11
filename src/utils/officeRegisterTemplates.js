@@ -73,7 +73,7 @@ const FE_SEM1_PHYSICS_COURSES = [
   { roman: 'IV', expectedName: 'Engineering Graphics & Design', subjectCode: 'ESC1102' },
   { roman: 'V', expectedName: 'Workshop & Manufacturing Practices-I', subjectCode: 'ESC1103' },
   { roman: 'VI', expectedName: 'English for General & Professional Communication', subjectCode: 'HSMC1101' },
-  { roman: 'VII', expectedName: 'Attitude & Aptitude Development-I / NCC', subjectCode: 'MC1101', nonCredit: true },
+  { roman: 'VII', expectedName: 'Attitude & Aptitude Development-1 / NCC', subjectCode: 'MC1101', nonCredit: true },
 ]
 
 const FE_SEM1_CHEMISTRY_COURSES = [
@@ -83,7 +83,7 @@ const FE_SEM1_CHEMISTRY_COURSES = [
   { roman: 'IV', expectedName: 'Engineering Mechanics', subjectCode: 'ESC1202' },
   { roman: 'V', expectedName: 'Workshop & Manufacturing Practices-I', subjectCode: 'ESC1203' },
   { roman: 'VI', expectedName: 'Introduction to Indian Knowledge System', subjectCode: 'HSMC1201' },
-  { roman: 'VII', expectedName: 'Attitude & Aptitude Development-I', subjectCode: 'MC1201', nonCredit: true },
+  { roman: 'VII', expectedName: 'Attitude & Aptitude Development-1', subjectCode: 'MC1201', nonCredit: true },
   { roman: 'VIII', expectedName: 'Professional Skills-I (Object Oriented Programming)', subjectCode: 'HME-PS1201' },
 ]
 
@@ -186,7 +186,7 @@ const FE_SEM2_CHEMISTRY_COURSES = [
   { roman: 'V', expectedName: 'Workshop & Manufacturing Practices-I', subjectCode: 'ESC1203' },
   { roman: 'VI', expectedName: 'Introduction to Indian Knowledge System', subjectCode: 'HSMC1201' },
   { roman: 'VII', expectedName: 'Professional Skills-I (Object Oriented Programming)', subjectCode: 'HME-PS1201' },
-  { roman: 'VIII', expectedName: 'Attitude & Aptitude Development-I', subjectCode: 'MC1201', nonCredit: true },
+  { roman: 'VIII', expectedName: 'Attitude & Aptitude Development-1', subjectCode: 'MC1201', nonCredit: true },
 ]
 
 export const FE_SEM2_CHEMISTRY_TEMPLATE = createTemplate({
