@@ -119,6 +119,9 @@ CREATE POLICY "Public profiles viewable" ON profiles FOR SELECT USING (is_public
 CREATE POLICY "Users manage own results" ON semester_results
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
+CREATE POLICY "Public results are viewable" ON semester_results
+  FOR SELECT USING (is_public = true AND is_official = true AND is_locked = true);
+
 CREATE POLICY "Users manage own marks" ON subject_marks
   FOR ALL USING (
     auth.uid() = (SELECT user_id FROM semester_results WHERE id = result_id)
