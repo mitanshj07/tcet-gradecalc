@@ -23,7 +23,7 @@ export function clamp(value, min, max) {
 
 export function getGradeInfo(percentage) {
   const safePercentage = Number.isFinite(percentage) ? percentage : 0
-  return GRADE_THRESHOLDS.find((threshold) => safePercentage >= threshold.min) ?? GRADE_THRESHOLDS.at(-1)
+  return GRADE_THRESHOLDS.find((threshold) => safePercentage >= threshold.min) ?? GRADE_THRESHOLDS[GRADE_THRESHOLDS.length - 1]
 }
 
 export function inputMaxForKey(subject, key) {

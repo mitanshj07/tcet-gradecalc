@@ -66,7 +66,7 @@ export default function Profile() {
       item.creditPoints,
       item.createdAt,
     ])
-    const csv = [header, ...rows].map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(',')).join('\n')
+    const csv = [header, ...rows].map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
     const link = document.createElement('a')
     link.download = 'tcet-gradecalc-history.csv'

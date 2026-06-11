@@ -5,7 +5,7 @@ export const TCET_ALLOWED_EMAIL_DOMAINS = (import.meta.env.VITE_TCET_ALLOWED_EMA
 
 export function getEmailDomain(email) {
   if (!email || !String(email).includes('@')) return null
-  return String(email).split('@').at(-1)?.trim().toLowerCase() || null
+  return String(email).split('@').pop()?.trim().toLowerCase() || null
 }
 
 export function isTcetEmailDomain(domain) {
