@@ -7,5 +7,6 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'dist',
+    target: ['es2015', 'safari13', 'ios13', 'chrome79', 'edge79'],
   },
 })
