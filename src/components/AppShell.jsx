@@ -55,6 +55,11 @@ export default function AppShell() {
             <span className={`hidden sm:inline-flex status-pill ${user ? 'status-success' : 'status-muted'}`}>
               {user ? 'Signed in' : 'Guest'}
             </span>
+            {!user && (
+              <NavLink to="/" className="secondary-button h-10 px-3">
+                Sign in
+              </NavLink>
+            )}
             <select className="select-input h-10 w-28 py-0 text-sm" value={branch} onChange={(event) => setBranch(event.target.value)}>
               {BRANCHES.map((item) => (
                 <option key={item.id} value={item.id}>

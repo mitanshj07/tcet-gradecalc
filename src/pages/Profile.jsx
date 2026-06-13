@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { BadgeCheck, Download, Edit3, ShieldCheck, Trash2 } from 'lucide-react'
 import CGPATracker from '../components/Charts/CGPATracker'
 import { useAuth } from '../hooks/useAuth'
@@ -125,6 +125,16 @@ export default function Profile() {
           {remoteError && <p className="mt-2 text-sm text-red-200">{remoteError}</p>}
           {profileNotice && <p className="mt-2 text-sm text-emerald-200">{profileNotice}</p>}
         </div>
+
+        {!user && (
+          <div className="mt-4 rounded-lg border border-sky-400/25 bg-sky-400/10 p-4 text-sm text-sky-100">
+            <p className="font-semibold text-white">Sign in to sync with Supabase</p>
+            <p className="mt-1 text-sky-100/90">Guest mode saves only on this device. Use sign in for leaderboard visibility and cloud history.</p>
+            <NavLink to="/" className="secondary-button mt-3">
+              Go to Sign In
+            </NavLink>
+          </div>
+        )}
 
         <div className="mt-5 space-y-3">
           <label>
