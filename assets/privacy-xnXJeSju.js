@@ -1,0 +1,1 @@
+function e(e=``){let t=e.trim();return t?t.split(/\s+/).filter(Boolean).map(e=>e.length<=1?e:`${e[0]}${`*`.repeat(Math.max(2,e.length-1))}`).join(` `):`Anonymous`}export{e as t};
