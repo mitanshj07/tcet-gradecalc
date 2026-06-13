@@ -37,6 +37,7 @@ export function mapProfileRow(profileRow, fallbackBranch = 'AIDS') {
   if (!profileRow) {
     return {
       name: '',
+      leaderboardName: '',
       branch: fallbackBranch,
       batchYear: '2025',
       rollNo: '',
@@ -48,7 +49,8 @@ export function mapProfileRow(profileRow, fallbackBranch = 'AIDS') {
   }
 
   return {
-    name: profileRow.display_name ?? profileRow.name ?? '',
+    name: profileRow.name ?? '',
+    leaderboardName: profileRow.display_name ?? '',
     branch: profileRow.branch ?? fallbackBranch,
     batchYear: profileRow.batch_year ? String(profileRow.batch_year) : '2025',
     rollNo: profileRow.roll_no ?? '',
@@ -126,7 +128,7 @@ export async function upsertRemoteProfile(userId, profile, user = null) {
   const authFields = getAuthProfileFields(user)
   const payload = {
     id: userId,
-    display_name: profile.name?.trim() || null,
+    display_name: profile.leaderboardName?.trim() || null,
     name: profile.name?.trim() || null,
     branch: profile.branch,
     batch_year: Number(profile.batchYear) || null,
@@ -140,6 +142,14 @@ export async function upsertRemoteProfile(userId, profile, user = null) {
   const { data, error } = await supabase.from('profiles').upsert(payload, { onConflict: 'id' }).select('*').single()
 
   if (error) throw error
+
+  const { error: visibilityError } = await supabase
+    .from('semester_results')
+    .update({ is_public: Boolean(profile.isPublic) })
+    .eq('user_id', userId)
+
+  if (visibilityError) throw visibilityError
+
   return mapProfileRow(data, profile.branch)
 }
 

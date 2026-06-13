@@ -13,7 +13,8 @@ describe('privacy utilities', () => {
 
   it('maps display_name without exposing email or roll number publicly', () => {
     expect(mapProfileRow({ display_name: 'Test User', branch: 'AIDS', batch_year: 2025, is_public: true })).toMatchObject({
-      name: 'Test User',
+      name: '',
+      leaderboardName: 'Test User',
       branch: 'AIDS',
       batchYear: '2025',
       isPublic: true,

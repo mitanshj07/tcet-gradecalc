@@ -5,6 +5,7 @@ import CGPATracker from '../components/Charts/CGPATracker'
 import { useAuth } from '../hooks/useAuth'
 import { useStore } from '../store/useStore'
 import { BRANCHES } from '../utils/semesterData'
+import { maskName } from '../utils/privacy'
 import { upsertRemoteProfile } from '../utils/supabaseData'
 
 export default function Profile() {
@@ -153,7 +154,7 @@ export default function Profile() {
           <label className="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3">
             <span>
               <span className="block text-sm font-semibold text-white">Public leaderboard</span>
-              <span className="block text-xs text-slate-400">Only locked snapshots are eligible.</span>
+              <span className="block text-xs text-slate-400">Manual estimates and official results can appear. Marks are never shown publicly.</span>
             </span>
             <input
               checked={profile.isPublic}
@@ -162,6 +163,24 @@ export default function Profile() {
               onChange={(event) => updateProfile({ isPublic: event.target.checked })}
             />
           </label>
+          {profile.isPublic && (
+            <label>
+              <span className="input-label">Leaderboard display name</span>
+              <input
+                className="mark-input"
+                maxLength={30}
+                placeholder="Leave blank to auto-mask your name"
+                value={profile.leaderboardName ?? ''}
+                onChange={(event) => updateProfile({ leaderboardName: event.target.value })}
+              />
+              <p className="mt-2 text-xs text-slate-400">
+                Public preview: {profile.leaderboardName?.trim() || maskName(profile.name || 'Your Name')}
+              </p>
+            </label>
+          )}
+          <p className="text-xs text-slate-400">
+            {user ? 'Profile changes sync automatically.' : 'Sign in to publish results to the shared leaderboard.'}
+          </p>
           {user && (
             <button type="button" className="secondary-button w-full" onClick={signOut}>
               Sign out

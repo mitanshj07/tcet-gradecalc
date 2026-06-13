@@ -6,6 +6,7 @@ import { deleteRemoteSnapshot, saveRemoteSnapshot } from '../utils/supabaseData'
 
 const defaultProfile = {
   name: '',
+  leaderboardName: '',
   branch: 'AIDS',
   batchYear: '2025',
   rollNo: '',

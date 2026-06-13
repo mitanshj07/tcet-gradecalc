@@ -17,7 +17,7 @@ Run `supabase/schema.sql` in the SQL editor.
 
 ## Existing project
 
-Run `supabase/migrations/20260607_parser_and_official_results.sql`.
+Run `supabase/migrations/20260607_parser_and_official_results.sql`, then `supabase/migrations/20260613_leaderboard_repair.sql`, then `supabase/migrations/20260613_leaderboard_include_manual_estimates.sql`.
 
 The migration is additive:
 
@@ -75,4 +75,4 @@ Users can manage their own rows. Public leaderboard views expose masked aggregat
 
 - If saves fail after deployment, confirm the migration ran and env vars are present.
 - If magic link opens but no session appears, confirm the production URL is in Supabase redirect URLs.
-- If leaderboard is empty, confirm both the profile and result are public, official, and locked.
+- If leaderboard is empty, confirm the latest leaderboard migrations ran, the profile is public, and the result has an SGPA saved.

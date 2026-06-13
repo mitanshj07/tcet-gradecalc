@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs';
+import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.js';
 import { parseOfficeRegisterText } from './officeRegisterParser';
 
 function groupTextItemsIntoLines(items = [], tolerance = 8) {
