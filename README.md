@@ -1,34 +1,143 @@
 # TCET GradeCalc
 
-Unofficial TCET Mumbai SGPA/CGPA calculator for CBCGS-HME 2023 students.
+<p align="center">
+  <strong>The unofficial SGPA/CGPA command center for TCET Mumbai CBCGS-HME 2023 students.</strong>
+</p>
 
-- **Production URL:** [https://tcet-gradecalc.vercel.app/](https://tcet-gradecalc.vercel.app/)
-- **Calculator route:** [https://tcet-gradecalc.vercel.app/#/calculator](https://tcet-gradecalc.vercel.app/#/calculator)
+<p align="center">
+  Calculate grades, parse result PDFs, simulate what-if marks, plan CGPA targets, and turn semester chaos into one clean dashboard.
+</p>
 
-## What it does
+<p align="center">
+  <a href="https://tcet-gradecalc.vercel.app/"><strong>Live App</strong></a>
+  ·
+  <a href="https://tcet-gradecalc.vercel.app/#/calculator"><strong>Calculator</strong></a>
+  ·
+  <a href="#local-setup"><strong>Run Locally</strong></a>
+  ·
+  <a href="#privacy-first-by-design"><strong>Privacy Notes</strong></a>
+</p>
 
-- Branch-aware FE subject catalog with verification metadata.
-- IA/ESE/TW/PR grading engine with ATKT detection.
-- Guest-mode persistence in localStorage.
-- Supabase-backed profile/history/leaderboard flow.
-- Privacy-safe client-side PDF gazette/result parser using `pdfjs-dist`.
-- Branch/semester/cycle-aware Office Register parser with manual template override.
-- Manual vs official result handling with parser confidence metadata.
-- What-if simulator, impact ranking, target calculator, CGPA planner, PNG/PDF share card.
-- PWA shell with offline fallback and Netlify SPA redirect file.
+<p align="center">
+  <img alt="React" src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=111" />
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=fff" />
+  <img alt="Supabase" src="https://img.shields.io/badge/Supabase-Optional%20Sync-3FCF8E?style=for-the-badge&logo=supabase&logoColor=111" />
+  <img alt="PWA" src="https://img.shields.io/badge/PWA-Offline%20Ready-5A0FC8?style=for-the-badge" />
+</p>
 
-Important wording: the grading system is common across supported TCET CBCGS-HME 2023-style templates. The branch/semester/cycle differences are subject templates: course order, credits, TW/PR/OR components, and max marks.
+---
 
-## Local development
+## The Hook
+
+TCET students should not need spreadsheets, screenshots, WhatsApp guesswork, and late-night formula checks just to understand their semester.
+
+**TCET GradeCalc** brings marks, subject templates, parser confidence, what-if analysis, CGPA planning, and shareable result cards into one fast PWA.
+
+It is built for the real student workflow:
+
+1. Enter marks manually or parse a result/gazette PDF.
+2. Verify the subject template and parser confidence.
+3. See SGPA, CGPA, ATKT risk, and performance breakdown.
+4. Simulate what marks are needed next.
+5. Save history, compare progress, and share a clean result card.
+
+## Live Demo
+
+| Surface | URL |
+| --- | --- |
+| Production app | https://tcet-gradecalc.vercel.app/ |
+| Calculator route | https://tcet-gradecalc.vercel.app/#/calculator |
+| Privacy policy | https://tcet-gradecalc.vercel.app/#/privacy |
+
+## What It Ships
+
+| Feature | What it does | Why students care |
+| --- | --- | --- |
+| SGPA/CGPA calculator | Computes semester and cumulative grade performance | No spreadsheet formulas |
+| Branch-aware subjects | Uses FE subject catalog and verification metadata | Reduces template mistakes |
+| IA/ESE/TW/PR engine | Handles internal, end-sem, term work, practical marks | Matches real mark components |
+| ATKT detection | Flags risky subjects and failure states | Makes danger visible early |
+| Result PDF parser | Extracts structured marks client-side with `pdfjs-dist` | Faster than manual entry |
+| Office Register parser | Handles branch/semester/cycle-aware templates | Supports official-style records |
+| What-if simulator | Tests marks before results are final | Helps plan realistic targets |
+| Impact ranking | Shows which subjects move SGPA most | Focus where it matters |
+| Target calculator | Calculates needed performance for goals | Turns "I need 8+" into numbers |
+| CGPA planner | Tracks long-term academic trajectory | Useful beyond one semester |
+| Share card export | PNG/PDF result cards via `html2canvas` and `jspdf` | Easy to share without messy screenshots |
+| Supabase sync | Optional profile/history/leaderboard flow | Keeps progress across devices |
+| Guest mode | LocalStorage persistence without login | Fast start, no signup wall |
+| PWA shell | Offline fallback and installable app feel | Works like a student utility should |
+
+## Why This Is Different
+
+Most calculators stop at "enter marks, get SGPA." TCET GradeCalc goes deeper:
+
+- It treats branch/semester/cycle differences as subject-template differences.
+- It separates manual marks from official parsed results.
+- It stores parser confidence metadata so users know when to verify.
+- It avoids uploading raw PDFs by default.
+- It includes planner tools, not just calculators.
+- It keeps guest mode alive even with optional Supabase auth.
+
+## Product Flow
+
+```mermaid
+flowchart LR
+  A["Student opens app"] --> B{"Manual marks or PDF?"}
+  B --> C["Manual calculator"]
+  B --> D["Client-side PDF parser"]
+  C --> E["Grade engine"]
+  D --> E
+  E --> F["SGPA / CGPA / ATKT status"]
+  F --> G["What-if simulator"]
+  F --> H["Impact ranking"]
+  F --> I["Share card export"]
+  F --> J["Optional Supabase sync"]
+```
+
+## Tech Stack
+
+| Layer | Stack |
+| --- | --- |
+| UI | React 19, Vite, Tailwind CSS |
+| Routing | React Router |
+| State | Zustand |
+| Charts | Recharts |
+| PDF parsing | pdfjs-dist |
+| Export | html2canvas, jsPDF |
+| Backend sync | Supabase |
+| PWA | Manifest + service worker |
+| Hosting | Vercel, Netlify, GitHub Pages-compatible |
+
+## Privacy First By Design
+
+Student result data is sensitive. This project is intentionally conservative:
+
+- Raw PDFs are parsed locally in the browser.
+- Raw PDFs are not uploaded by default.
+- Full raw extracted text is not saved by default.
+- Only confirmed structured marks/profile data are saved to Supabase.
+- Leaderboard participation is opt-in.
+- Names are masked by default in leaderboard-style views.
+
+Read more:
+
+- [`PRIVACY.md`](./PRIVACY.md)
+- [`DISCLAIMER.md`](./DISCLAIMER.md)
+- [`PARSER_NOTES.md`](./PARSER_NOTES.md)
+
+## Local Setup
 
 ```bash
 npm install
 npm run dev -- --host 127.0.0.1
 ```
 
-App URL:
+Open:
 
-`http://127.0.0.1:5173/`
+```txt
+http://127.0.0.1:5173/
+```
 
 ## Validation
 
@@ -38,71 +147,85 @@ npm run build
 npm test
 ```
 
-## Environment variables
+## Environment Variables
 
-Set these in local `.env.local` and any hosting platform:
+Set these in `.env.local` and in your hosting platform:
 
 ```bash
-VITE_SUPABASE_URL=...
-VITE_SUPABASE_ANON_KEY=...
-VITE_AUTH_REDIRECT_URL=...
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+VITE_AUTH_REDIRECT_URL=
 VITE_TCET_ALLOWED_EMAIL_DOMAINS=tcetmumbai.in
 ```
 
-## Supabase setup
+## Supabase Setup
 
-1. Run `supabase/schema.sql` for a fresh project, or `supabase/migrations/20260607_parser_and_official_results.sql` on the current live project.
-2. Enable Google auth for production and keep Email auth as fallback.
-3. Add redirect URLs:
+1. Run `supabase/schema.sql` for a fresh project.
+2. Enable Google auth for production.
+3. Keep Email magic link as a fallback.
+4. Add redirect URLs:
    - `http://127.0.0.1:5173/`
    - `http://localhost:5173/`
-   - your LAN URL if you test on a phone, for example `http://192.168.1.25:5173/`
-   - your production URL
+   - your LAN URL for phone testing
+   - production URL
+5. Keep guest mode available for fast access.
 
 Production auth strategy:
 
 - Google OAuth is the primary sign-in path.
-- Email magic link stays available as a secondary fallback.
+- Email magic link remains a fallback.
 - Guest mode always stays available.
-- If you keep email login in production, use custom SMTP rather than the default Supabase email quota.
+- If email login remains enabled in production, use custom SMTP rather than the default Supabase email quota.
 
-If you open the app on your phone during local testing, set `VITE_AUTH_REDIRECT_URL` to a reachable address instead of `localhost`. The easiest options are:
+## Deployment
 
-- your computer's LAN IP, like `http://192.168.1.25:5173`
-- a deployed preview URL
+### Vercel
 
-Do not disable email confirmation for production by default. That is only acceptable for local testing if you explicitly choose it.
+```bash
+npm run build
+```
 
-## Hosting
+Output directory:
+
+```txt
+dist
+```
 
 ### Netlify
 
 - Build command: `npm run build`
 - Publish directory: `dist`
-- SPA redirects file is already included at `public/_redirects`
-
-### Vercel
-
-- Build command: `npm run build`
-- Output directory: `dist`
+- SPA redirects file already exists at `public/_redirects`
 
 ### GitHub Pages
 
-- Existing workflow builds with `VITE_BASE_PATH=/<repo-name>/`
-- Keep HashRouter and add the Pages URL to Supabase redirect URLs
+The workflow can build with:
 
-## Privacy notes
+```bash
+VITE_BASE_PATH=/<repo-name>/
+```
 
-- Raw PDFs are parsed locally in the browser.
-- Raw PDFs are not uploaded by default.
-- Full raw extracted text is not saved by default.
-- Only confirmed structured marks/profile data are saved to Supabase.
-- Leaderboard is opt-in and masks names by default.
+Keep `HashRouter` and add the Pages URL to Supabase redirect URLs.
 
-## More docs
+## Extra Docs
 
-- `LAUNCH_CHECKLIST.md`
-- `PARSER_NOTES.md`
-- `SUPABASE_SETUP.md`
-- `PRIVACY.md`
-- `DISCLAIMER.md`
+- [`LAUNCH_CHECKLIST.md`](./LAUNCH_CHECKLIST.md)
+- [`PARSER_NOTES.md`](./PARSER_NOTES.md)
+- [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md)
+- [`PRIVACY.md`](./PRIVACY.md)
+- [`DISCLAIMER.md`](./DISCLAIMER.md)
+
+## Roadmap Ideas
+
+- More branch templates
+- More official-result parser fixtures
+- Better mobile result-card export
+- Student-safe anonymous benchmark mode
+- Semester-by-semester academic recovery planner
+- Admin verification panel for parser templates
+
+## Disclaimer
+
+This is an unofficial student utility. Always verify final academic results with official TCET/University records.
+
+If this helped you survive result season, star the repo and share it with your batch.
